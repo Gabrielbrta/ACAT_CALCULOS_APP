@@ -1,10 +1,15 @@
+import { ThemeProvider } from 'styled-components';
+import Reset from './styles/reset';
+import {theme} from './styles/theme';
 import { createRoot } from 'react-dom/client';
+import Home from './components/Home';
 
 const App = () => {
     return (
-        <>
-        <h1>Hello, World!</h1>
-        </>
+        <ThemeProvider theme={theme}>
+            <Reset />
+            <Home />
+        </ThemeProvider>
     );
 }
 
