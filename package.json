@@ -31,11 +31,13 @@
     "vite": "^5.4.19"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.1",
     "@vitejs/plugin-react": "^4.7.0",
     "electron-squirrel-startup": "^1.0.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
-    "styled-components": "^6.1.19"
+    "styled-components": "^6.1.19",
+    "zod": "^4.0.15"
   }
 }

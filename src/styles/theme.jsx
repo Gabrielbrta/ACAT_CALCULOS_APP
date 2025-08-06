@@ -8,8 +8,8 @@ export const theme = {
         result: "#103be9",
     },
     text: {
-        titleSize: "2rem",
-        titleH2Size: "1.275rem",
+        titleSize: "1.875rem",
+        titleH2Size: "1.1rem",
         textSize: "1rem",
     },
     spacing:{

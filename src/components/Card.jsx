@@ -7,12 +7,15 @@ const CardsContainer = styled.div `
     align-items: left;
     background-color: ${({theme}) => theme.color.bgColorElements};
     max-width: 376px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.25);
     width: 100%;
     max-height: 210px;
     border-radius: 5px;
     height: 100%;
     padding: ${({theme}) => theme.spacing.cardPadding};
+    .result {
+        color: ${({theme}) => theme.color.result};
+    }
 
 `
 
@@ -31,6 +34,8 @@ const Form = styled.form`
     flex: 1;
     align-items: center;
     justify-content: space-between;
+
+    
 `
 
 const Card = () => {
@@ -43,6 +48,7 @@ const Card = () => {
             x <span>b1</span> + <span>bda1</span> + 
             <label htmlFor="hp">HP</label>
             <Input type="text" id="hp" />
+            - <span className='desconto'>5%</span>
             </Form>
             <p>Resultado: <span className='result'>R$12,30</span></p>
         </CardsContainer>
