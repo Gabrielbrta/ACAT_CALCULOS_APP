@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 
+
+// estilos --------------------------
 const FormContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -41,42 +43,51 @@ const FormContract = styled.form`
     }
 `;
 
+// estilos --------------------------
+
+//Schema Formulario ------------------------
 const schema = z.object({
     nomeContrato: z.string().min(2, 'Campo Obrigatório'). max(30, 'Campo Obrigatório'),
-
-    bandeira1: z.string().max(4, "Campo Obrigatório").min(1, "Campo Obrigatório"),
-
-    bandeirada1: z.string().max(4, "Campo Obrigatório").min(1, "Campo Obrigatório"),
-
+    
+    bandeira1: z.string().max(5,('Somente 5 caracteres')).min(1,('Minimo de 4 caracteres')).regex(/^\d{1,2},\d{2}$/, "formato 0,00 ou 00,00"),
+    
+    bandeirada1: z.string().max(4,('Somente 5 caracteres')).min(1,('Minimo de 4 caracteres')).regex(/^\d{1,2},\d{2}$/, "formato 0,00 ou 00,00"),
+    
     hasBandeira2: z.boolean(),
 
     bandeira2: z.string(),
-
+    
     bandeirada2: z.string(),
 }).superRefine((values, ctx) => {
-    let b2Vazio = values.hasBandeira2 && values.bandeira2.length < 3; 
-    if(b2Vazio) {
+    let regex = /^\d{1,2},\d{2}$/;
+
+    if(!regex.test(values.bandeira2) && values.hasBandeira2) {
         ctx.addIssue({
             path: ['bandeira2'],
-            code: 'too_small',
+            code: 'invalid_element',
             inclusive: true,
-            minimum: 3,
-            message: "Campo obrigatório"
+            minimum: 5,
+            message: "formato 0,00 ou 00,00"
         });
     }
-    let bda2Vazio = values.bandeirada2.length < 3 && values.hasBandeira2
-    if(bda2Vazio) {
+    if(!regex.test(values.bandeirada2) && values.hasBandeira2) {
         ctx.addIssue({
             path: ['bandeirada2'],
-            code: 'too_small',
-            minimum: 3,
+            code: 'invalid_element',
+            minimum: 5,
             inclusive: true,
-            message: "Campo obrigatório"
+            message: "formato 0,00 ou 00,00"
         })
     }
-})
+}).transform((fields) => ({
+    hasBandeira2: fields.hasBandeira2,
+    bandeirada2: fields.hasBandeira2 && fields.bandeira2 ?fields.bandeirada2: '',
+    bandeira2: fields.hasBandeira2 && fields.bandeira2 ?fields.bandeira2: '',
 
+}));
+//Schema Formulario ------------------------
 
+// formulario -----------------------------------
 const Form = () => {
     const {
         register,
