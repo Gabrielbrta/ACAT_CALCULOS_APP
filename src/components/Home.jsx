@@ -8,17 +8,24 @@ const Main = styled.main`
     width: 100%;
     height: 100vh;
     display:grid;
-    grid-template-columns: 200px 1fr 260px;
+    grid-template-columns: 280px 1fr 300px;
 `
 
 const Home = () => {
+  const [contratos , setContratos] = React.useState([]);
+  const [cardContent, setCardContent] = React.useState("");
+
+    React.useEffect(() => {
+      window.Api.PegarContratos().then(contratos => setContratos(contratos));
+    },[]); 
+
   return (
     <Main>
-        <Menu />
-        <Contract />
-        <Form />
+        <Menu contratos={contratos} setCardContent={setCardContent}/>
+        <Contract idContrato={cardContent} setCardContent={setCardContent} />
+        <Form setContratos={setContratos}/>
     </Main>
   )
 }
 
-export default Home
+export default Home;

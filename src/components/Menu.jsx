@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components';
 import { Subtitle } from './Title';
 import List from './List';
@@ -22,13 +22,15 @@ const ContainerLists = styled.div `
   width: 100%;
 `
 
-const Menu = () => {
+
+const Menu = ({setCardContent, contratos}) => {
+
   return (
     <ContainerMenu>
       <Subtitle>Contratos</Subtitle>
-      <ContainerLists>  
-        <List items={['localStorage']}/>
-        <List title="Funcionalidades" items={['Gerar Relatório']}/>
+      <ContainerLists>
+        <List setCardContent={setCardContent} contratos={contratos}></List>
+      <List title={"Funcionalidades"} items={["Simulador"]}></List>
       </ContainerLists>
     </ContainerMenu>
   )

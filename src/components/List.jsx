@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components';
+import { useNavigate  } from "react-router-dom";
 import { Subtitle } from './Title';
 
 const ListContainer = styled.ul `
@@ -30,12 +31,24 @@ const ListItem = styled.li `
     }   
 `
 
-const List = ({title, items}) => {
+
+const List = ({title, items, contratos, setCardContent}) => {
+    const navigate = useNavigate();
   return (
     <ListContainer>
         {title && <Subtitle>{title}</Subtitle>}
         {items && items.map((item, i) => {
-            return <ListItem key={i}>{item}</ListItem>
+            return (
+                <>
+                {item.id ?
+                <ListItem onClick={() => {setCardContent(item.id); navigate('/')  }} key={i}>{item}</ListItem> : 
+                <ListItem onClick={() => {navigate("/simulador") }} key={i}>{item}</ListItem>}
+                
+            </>
+        )
+        })}
+        {contratos && contratos.map((contrato, i) => {
+            return <ListItem key={i} id={contrato.id} onClick={() => setCardContent(contrato.id)}>{contrato.nomeContrato}</ListItem>
         })}
     </ListContainer>
   )

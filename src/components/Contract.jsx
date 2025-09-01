@@ -17,12 +17,28 @@ const ContractContainer = styled.section`
 
 
 
-const Contract = () => {
+const Contract = ({idContrato, setCardContract}) => {
+   const [contrato, setContrato] = React.useState(false);
+    React.useEffect(() => {
+        if(idContrato) {
+            window.Api.PegarContratos().then((dados) => {
+                const idEncotrado = dados.find(c => c.id === idContrato)
+                setContrato(idEncotrado);
+            });
+    
+        }
+    }, [idContrato])
+
   return (
     <ContractContainer>
-      <Title>CONTRATO: localstorage</Title>
-      <Card />
-      <Card />
+      {contrato && 
+      <>
+        <Title>CONTRATO: {contrato.nomeContrato}</Title>
+        <Card contrato={contrato}/>
+      </>
+      }
+      {!contrato && <Title>Selecione o contrato</Title>}
+      
     </ContractContainer>
   )
 }
