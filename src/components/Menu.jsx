@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components';
 import { Subtitle } from './Title';
 import List from './List';
@@ -23,14 +23,13 @@ const ContainerLists = styled.div `
 `
 
 
-const Menu = ({setCardContent, contratos}) => {
-
+const Menu = () => {
   return (
     <ContainerMenu>
       <Subtitle>Contratos</Subtitle>
       <ContainerLists>
-        <List setCardContent={setCardContent} contratos={contratos}></List>
-      <List title={"Funcionalidades"} items={["Simulador"]}></List>
+        <List />
+        <List title={"Funcionalidades"} items={["Simulador"]} />
       </ContainerLists>
     </ContainerMenu>
   )

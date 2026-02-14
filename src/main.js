@@ -1,7 +1,13 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
+import { fileURLToPath } from 'url';
 import fs from 'fs';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
+
+
+// Criar __dirname para ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {

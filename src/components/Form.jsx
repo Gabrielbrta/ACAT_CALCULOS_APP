@@ -5,6 +5,7 @@ import Btn from './Button';
 import { Subtitle } from './Title';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useContract } from '../contexts/ContractContext';
 
 
 // estilos --------------------------
@@ -138,8 +139,9 @@ const schema = z.object({
 //Schema Formulario ------------------------
 
 // formulario -----------------------------------
-const Form = ({setContratos}) => {
+const Form = () => {
     const [menu, setMenu] = React.useState(false);
+    const { saveContrato } = useContract();
 
     const {
         register,
@@ -164,9 +166,8 @@ const Form = ({setContratos}) => {
     });
 
     const hasBandeira2 = watch('hasBandeira2')
-    const handleSubmitForm = (data) => {
-        window.Api.SalvarContrato(data);
-        window.Api.PegarContratos().then(contratos => setContratos(contratos));
+    const handleSubmitForm = async (data) => {
+        await saveContrato(data);
         reset();
     }
 
@@ -174,7 +175,7 @@ const Form = ({setContratos}) => {
   return (
     <FormContainer className={!menu ? "closed" : ""}>
         <a onClick={() => setMenu((value) => !value)}
-         className='toggle-button'>{!menu ? <i class="fa-solid fa-file-circle-plus"></i>:<i class="fa-solid fa-arrow-right-from-bracket"></i>}</a>
+         className='toggle-button'>{!menu ? <i className="fa-solid fa-file-circle-plus"></i>:<i className="fa-solid fa-arrow-right-from-bracket"></i>}</a>
         <Subtitle>Criar Contrato</Subtitle>
         <FormContract className='home-form' onSubmit={handleSubmit(handleSubmitForm)}>
             <label htmlFor="nomeContrato">Nome Contrato</label>

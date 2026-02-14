@@ -12,18 +12,11 @@ const Main = styled.main`
 `
 
 const Home = () => {
-  const [contratos , setContratos] = React.useState([]);
-  const [cardContent, setCardContent] = React.useState("");
-
-    React.useEffect(() => {
-      window.Api.PegarContratos().then(contratos => setContratos(contratos));
-    },[]); 
-
   return (
     <Main>
-        <Menu contratos={contratos} setCardContent={setCardContent}/>
-        <Contract idContrato={cardContent} setCardContent={setCardContent} />
-        <Form setContratos={setContratos}/>
+        <Menu />
+        <Contract />
+        <Form />
     </Main>
   )
 }

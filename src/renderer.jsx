@@ -5,16 +5,19 @@ import { createRoot } from 'react-dom/client';
 import Reset from './styles/reset';
 import Home from './components/Home';
 import Simulador from './components/Simulador';
+import { ContractProvider } from './contexts/ContractContext';
 
 const App = () => {
     return (
         <BrowserRouter>
             <ThemeProvider theme={theme}>
-                <Reset />
-                <Routes>
-                    <Route path='/' element={<Home />} />
-                    <Route path='/simulador' element={<Simulador />} />
-                </Routes>
+                <ContractProvider>
+                    <Reset />
+                    <Routes>
+                        <Route path='/' element={<Home />} />
+                        <Route path='/simulador' element={<Simulador />} />
+                    </Routes>
+                </ContractProvider>
             </ThemeProvider>
         </BrowserRouter>
     );

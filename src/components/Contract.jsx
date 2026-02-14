@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components';
 import {Title} from './Title';
 import Card from './Card';
+import { useContract } from '../contexts/ContractContext';
 
 const ContractContainer = styled.section`
     width: 100%;
@@ -15,19 +16,9 @@ const ContractContainer = styled.section`
 
 `
 
-
-
-const Contract = ({idContrato, setCardContract}) => {
-   const [contrato, setContrato] = React.useState(false);
-    React.useEffect(() => {
-        if(idContrato) {
-            window.Api.PegarContratos().then((dados) => {
-                const idEncotrado = dados.find(c => c.id === idContrato)
-                setContrato(idEncotrado);
-            });
-    
-        }
-    }, [idContrato])
+const Contract = () => {
+  const { cardContent, getContratoById } = useContract();
+  const contrato = cardContent ? getContratoById(cardContent) : null;
 
   return (
     <ContractContainer>
