@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components';
 import { useNavigate  } from "react-router-dom";
 import { Subtitle } from './Title';
-import { useContract } from '../contexts/ContractContext';
 
 const ListContainer = styled.ul `
     list-style-type: none;
@@ -35,7 +34,6 @@ const ListItem = styled.li `
 
 const List = ({title, items}) => {
     const navigate = useNavigate();
-    const { contratos, setCardContent } = useContract();
 
   return (
     <ListContainer>
@@ -43,15 +41,14 @@ const List = ({title, items}) => {
         {items && items.map((item, i) => {
             return (
                 <React.Fragment key={i}>
-                {item.id ?
-                <ListItem onClick={() => {setCardContent(item.id); navigate('/')  }}>{item}</ListItem> : 
-                <ListItem onClick={() => {navigate("/simulador") }}>{item}</ListItem>}
+                {item === "Simulador" ?
+                <ListItem onClick={() => {navigate("/simulador") }}>{item}</ListItem> :
+                item === "Gerenciar Contratos" ?
+                <ListItem onClick={() => {navigate("/contratos") }}>{item}</ListItem> :
+                <ListItem>{item}</ListItem>}
                 
             </React.Fragment>
         )
-        })}
-        {!items && contratos && contratos.map((contrato, i) => {
-            return <ListItem key={i} id={contrato.id} onClick={() => setCardContent(contrato.id)}>{contrato.nomeContrato}</ListItem>
         })}
     </ListContainer>
   )

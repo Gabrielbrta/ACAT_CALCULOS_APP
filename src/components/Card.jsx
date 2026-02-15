@@ -17,8 +17,23 @@ const CardsContainer = styled.div `
     .result {
         color: ${({theme}) => theme.color.result};
     }
-
 `
+
+const Select = styled.select`
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #acacac;
+    margin-bottom: 15px;
+    font-size: ${({theme}) => theme.text.textSize};
+    background-color: white;
+    cursor: pointer;
+    
+    &:focus {
+        outline: none;
+        border-color: ${({theme}) => theme.color.button};
+    }
+`;
 
 const Input = styled.input`
     max-width: 55px;
@@ -63,119 +78,91 @@ const Form = styled.form`
             }
         }
     }
-
-    
 `
 
 const Card = ({contrato}) => {
-    const {register, handleSubmit,watch, reset} = useForm();
-    const [bandeira1Result, setBandeira1Result] = React.useState(0);
-    const [bandeira2Result, setBandeira2Result] = React.useState(0);
+    const {register, handleSubmit, watch, reset} = useForm();
+    const [calculoSelecionado, setCalculoSelecionado] = React.useState(0);
+    const [resultado, setResultado] = React.useState(0);
+    
     function toText(number) {return String(number.toFixed(2)).replace(".", ",");}
     function toNumber(text) {return Number(String(text).replace(",", "."));}
 
     React.useEffect(() => {
-        reset()
-        setBandeira1Result(false)
-        setBandeira2Result(false)
-    }, [contrato])
+        reset();
+        setResultado(0);
+        setCalculoSelecionado(0);
+    }, [contrato]);
     
-    let conteudo;
-    function bandeira1() {
-        let b1 = contrato.bandeira1;
-        let bandeirada = contrato.bandeirada1;
-        let km = toNumber(watch('b1'));
-        let hp = toNumber(watch('hp1'));
-        if(isNaN(km) || isNaN(hp)) {
-            setBandeira1Result("Não foi possível calcular")
-        } else {
-            let resultado = (((km * b1) + bandeirada) + hp);
-            let desconto = contrato.desconto1 ? (contrato.desconto1 / 100) * resultado : 0;
-            resultado = km == "" ? resultado : resultado - desconto;
-            resultado.toFixed(2);
-            setBandeira1Result("R$ " + toText(resultado));
-        }
+    const calcular = () => {
+        const calculoAtual = contrato.calculos[calculoSelecionado];
+        const km = toNumber(watch('km'));
+        const hp = toNumber(watch('hp'));
         
-    }
-    function bandeira2() {
-        let b2 = contrato.bandeira2;
-        let bandeirada = contrato.bandeirada2;
-        let km = toNumber(watch('b2'));
-        let hp2 = toNumber(watch('hp2'));
-        if(isNaN(km) || isNaN(hp2)) {
-            setBandeira2Result("Não foi possível calcular")
+        if(isNaN(km) || isNaN(hp)) {
+            setResultado("Não foi possível calcular");
         } else {
-            let resultado = (((km * b2) + bandeirada) + hp2);
-            let desconto = contrato.desconto2 ? (contrato.desconto2 / 100) * resultado : 0;
-            resultado = km == "" ? resultado : resultado - desconto;
+            let resultado = (((km * calculoAtual.bandeira) + calculoAtual.bandeirada) + hp);
+            let desconto = calculoAtual.desconto ? (calculoAtual.desconto / 100) * resultado : 0;
+            resultado = resultado - desconto;
             resultado.toFixed(2);
-            setBandeira2Result("R$ " + toText(resultado));
+            setResultado("R$ " + toText(resultado));
         }
-    }
+    };
 
-    if (contrato.bandeira1 && contrato.bandeira2 && contrato.bandeirada1 && contrato.bandeirada2) {
-    conteudo = <>
+    // Compatibilidade com contratos antigos (bandeira1/bandeira2)
+    const calculos = contrato.calculos || [
+        {
+            nomeCalculo: 'Bandeira 1',
+            bandeira: contrato.bandeira1,
+            bandeirada: contrato.bandeirada1,
+            desconto: contrato.desconto1
+        },
+        ...(contrato.hasBandeira2 ? [{
+            nomeCalculo: 'Bandeira 2',
+            bandeira: contrato.bandeira2,
+            bandeirada: contrato.bandeirada2,
+            desconto: contrato.desconto2
+        }] : [])
+    ];
+
+    const calculoAtual = calculos[calculoSelecionado];
+
+    return (
         <CardsContainer>
-            <p>Bandeira 1</p>
-            <Form onSubmit={handleSubmit(bandeira1)}>
-            <div className='inputs'>
-                <label htmlFor="km">KM</label>
-                <Input maxLength={6} {...register("b1")} type="text" id="km" />
-                x <span>{toText(contrato.bandeira1)}</span> + <span>{toText(contrato.bandeirada1)}</span> +
-                <label htmlFor="hp">HP</label>
-                <Input maxLength={6} {...register("hp1")} type="text" id="hp" />
-                {contrato.desconto1 && <span className='desconto'>- {contrato.desconto1}%</span>}
-            </div>
-            <div className='enviar'>
-                <p>Resultado: <span className='result'>{bandeira1Result}</span></p>
-                <button type='submit'>Enviar</button>
-            </div>
+            {calculos.length > 1 && (
+                <Select 
+                    value={calculoSelecionado} 
+                    onChange={(e) => {
+                        setCalculoSelecionado(Number(e.target.value));
+                        setResultado(0);
+                    }}
+                >
+                    {calculos.map((calc, index) => (
+                        <option key={index} value={index}>
+                            {calc.nomeCalculo}
+                        </option>
+                    ))}
+                </Select>
+            )}
+            
+            <p><strong>{calculoAtual.nomeCalculo}</strong></p>
+            <Form onSubmit={handleSubmit(calcular)}>
+                <div className='inputs'>
+                    <label htmlFor="km">KM</label>
+                    <Input maxLength={6} {...register("km")} type="text" id="km" />
+                    x <span>{toText(calculoAtual.bandeira)}</span> + <span>{toText(calculoAtual.bandeirada)}</span> +
+                    <label htmlFor="hp">HP</label>
+                    <Input maxLength={6} {...register("hp")} type="text" id="hp" />
+                    {calculoAtual.desconto && <span className='desconto'>- {calculoAtual.desconto}%</span>}
+                </div>
+                <div className='enviar'>
+                    <p>Resultado: <span className='result'>{resultado}</span></p>
+                    <button type='submit'>Calcular</button>
+                </div>
             </Form>
         </CardsContainer>
-        <CardsContainer>
-            <p>Bandeira 2</p>
-            <Form onSubmit={handleSubmit(bandeira2)}>
-            <div className="inputs">
-                <label htmlFor="km2">KM</label>
-                <Input maxLength={6} {...register("b2")} type="text" id="km2" />
-                x <span>{toText(contrato.bandeira2)}</span> + <span>{toText(contrato.bandeirada2)}</span> +
-                <label htmlFor="hp2">HP</label>
-                <Input maxLength={6} {...register("hp2")}type="text" id="hp2" />
-                {contrato.desconto2 && <span className='desconto'>- {contrato.desconto2}%</span>}
-            </div>
-            <div className="enviar">
-                <p>Resultado: <span className='result'>{bandeira2Result}</span></p>
-                <button type='submit'>Enviar</button>
-            </div>
-            </Form>
-        </CardsContainer>
-        </>;
-    }  else {
-    conteudo = <>
-        <CardsContainer>
-            <p>Bandeira 1</p>
-            <Form onSubmit={handleSubmit(bandeira1)}>
-            <div className='inputs'>
-                <label htmlFor="km">KM</label>
-                <Input maxLength={6} {...register("b1")} type="text" id="km" />
-                x <span>{toText(contrato.bandeira1)}</span> + <span>{toText(contrato.bandeirada1)}</span> +
-                <label htmlFor="hp">HP</label>
-                <Input maxLength={6} {...register("hp1")} type="text" id="hp" />
-                {contrato.desconto1 && <span className='desconto'>- {contrato.desconto1}%</span>}
-            </div>
-            <div className='enviar'>
-                <p>Resultado: <span className='result'>{bandeira1Result}</span></p>
-                <button type='submit'>Enviar</button>
-            </div>
-            </Form>
-        </CardsContainer>
-    </>;
-    }
-  return (
-    <>
-    {conteudo}
-    </>
-  )
+    )
 }
 
 export default Card

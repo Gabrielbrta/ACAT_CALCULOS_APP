@@ -21,6 +21,16 @@ export const ContractProvider = ({ children }) => {
     await loadContratos(); // Recarrega os contratos após salvar
   };
 
+  const updateContrato = async (id, data) => {
+    await window.Api.AtualizarContrato(id, data);
+    await loadContratos(); // Recarrega os contratos após atualizar
+  };
+
+  const deleteContrato = async (id) => {
+    await window.Api.DeletarContrato(id);
+    await loadContratos(); // Recarrega os contratos após deletar
+  };
+
   const getContratoById = (id) => {
     return contratos.find(c => c.id === id);
   };
@@ -32,6 +42,8 @@ export const ContractProvider = ({ children }) => {
         cardContent,
         setCardContent,
         saveContrato,
+        updateContrato,
+        deleteContrato,
         loadContratos,
         getContratoById,
       }}

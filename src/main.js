@@ -91,3 +91,45 @@ ipcMain.handle("getContratos", () => {
 
   return  JSON.parse(fs.readFileSync(bdContratos, "utf-8"));
 })
+
+// Atualizar contrato
+ipcMain.handle("AtualizarContrato", (event, id, dados) => {
+  const bdContratos = path.join(app.getPath("userData"), "contratos.json");
+
+  if(!fs.existsSync(bdContratos)) return { success: false, message: "Arquivo não encontrado" };
+
+  let contratos = JSON.parse(fs.readFileSync(bdContratos, "utf-8"));
+  
+  const index = contratos.findIndex(c => c.id === id);
+  
+  if(index === -1) return { success: false, message: "Contrato não encontrado" };
+
+  // Mantém o ID original e atualiza os demais dados
+  contratos[index] = {
+    ...dados,
+    id: id
+  };
+
+  fs.writeFileSync(bdContratos, JSON.stringify(contratos, null, 2));
+
+  return { success: true, message: "Contrato atualizado com sucesso" };
+});
+
+// Deletar contrato
+ipcMain.handle("DeletarContrato", (event, id) => {
+  const bdContratos = path.join(app.getPath("userData"), "contratos.json");
+
+  if(!fs.existsSync(bdContratos)) return { success: false, message: "Arquivo não encontrado" };
+
+  let contratos = JSON.parse(fs.readFileSync(bdContratos, "utf-8"));
+  
+  const filteredContratos = contratos.filter(c => c.id !== id);
+  
+  if(contratos.length === filteredContratos.length) {
+    return { success: false, message: "Contrato não encontrado" };
+  }
+
+  fs.writeFileSync(bdContratos, JSON.stringify(filteredContratos, null, 2));
+
+  return { success: true, message: "Contrato deletado com sucesso" };
+});

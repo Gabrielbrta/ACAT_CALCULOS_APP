@@ -5,5 +5,5 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('Api', {
     SalvarContrato: (dados) => ipcRenderer.send("SalvarContrato", dados),
-    PegarContratos: () => ipcRenderer.invoke("getContratos"),
-});
+    PegarContratos: () => ipcRenderer.invoke("getContratos"),    AtualizarContrato: (id, dados) => ipcRenderer.invoke("AtualizarContrato", id, dados),
+    DeletarContrato: (id) => ipcRenderer.invoke("DeletarContrato", id),});

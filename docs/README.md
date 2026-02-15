@@ -25,6 +25,7 @@ docs/
 │   │   ├── Form.md
 │   │   ├── Home.md
 │   │   ├── List.md
+│   │   ├── ListaContratos.md  # ✨ NOVO
 │   │   ├── Menu.md
 │   │   ├── Simulador.md
 │   │   └── Title.md

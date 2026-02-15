@@ -26,10 +26,9 @@ const ContainerLists = styled.div `
 const Menu = () => {
   return (
     <ContainerMenu>
-      <Subtitle>Contratos</Subtitle>
+      <Subtitle>ACAT</Subtitle>
       <ContainerLists>
-        <List />
-        <List title={"Funcionalidades"} items={["Simulador"]} />
+        <List title={"Funcionalidades"} items={["Gerenciar Contratos", "Simulador"]} />
       </ContainerLists>
     </ContainerMenu>
   )

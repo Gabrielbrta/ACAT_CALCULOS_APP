@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import z from 'zod';
 import Btn from './Button';
 import { Subtitle } from './Title';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useContract } from '../contexts/ContractContext';
 
@@ -92,49 +92,30 @@ const FormContract = styled.form`
 // estilos --------------------------
 
 //Schema Formulario ------------------------
+const calculoSchema = z.object({
+    nomeCalculo: z.string().min(2, 'Nome obrigatório').max(30, 'Máximo 30 caracteres'),
+    bandeira: z.string()
+        .max(5, 'Somente 5 caracteres')
+        .min(1, 'Mínimo de 4 caracteres')
+        .regex(/^\d{1,2},\d{2}$/, "formato 0,00 ou 00,00"),
+    bandeirada: z.string()
+        .max(5, 'Somente 5 caracteres')
+        .min(1, 'Mínimo de 4 caracteres')
+        .regex(/^\d{1,2},\d{2}$/, "formato 0,00 ou 00,00"),
+    desconto: z.string().optional(),
+});
+
 const schema = z.object({
-    nomeContrato: z.string().min(2, 'Campo Obrigatório'). max(30, 'Campo Obrigatório'),
-    
-    bandeira1: z.string().max(5,('Somente 5 caracteres')).min(1,('Minimo de 4 caracteres')).regex(/^\d{1,2},\d{2}$/, "formato 0,00 ou 00,00"),
-    
-    bandeirada1: z.string().max(4,('Somente 5 caracteres')).min(1,('Minimo de 4 caracteres')).regex(/^\d{1,2},\d{2}$/, "formato 0,00 ou 00,00"),
-    desconto1: z.string().optional(),
-    
-    hasBandeira2: z.boolean(),
-    bandeira2: z.string(),
-    bandeirada2: z.string(),
-    desconto2: z.string().optional(),
-}).superRefine((values, ctx) => {
-    let regex = /^\d{1,2},\d{2}$/;
-
-    if(!regex.test(values.bandeira2) && values.hasBandeira2) {
-        ctx.addIssue({
-            path: ['bandeira2'],
-            code: 'invalid_element',
-            inclusive: true,
-            minimum: 5,
-            message: "formato 0,00 ou 00,00"
-        });
-    }
-    if(!regex.test(values.bandeirada2) && values.hasBandeira2) {
-        ctx.addIssue({
-            path: ['bandeirada2'],
-            code: 'invalid_element',
-            minimum: 5,
-            inclusive: true,
-            message: "formato 0,00 ou 00,00"
-        })
-    }
+    nomeContrato: z.string().min(2, 'Campo Obrigatório').max(30, 'Máximo 30 caracteres'),
+    calculos: z.array(calculoSchema).min(1, 'Adicione pelo menos um cálculo'),
 }).transform((fields) => ({
-    hasBandeira2: fields.hasBandeira2,
-    bandeirada2: fields.hasBandeira2 && fields.bandeira2 ? Number(fields.bandeirada2.replace(",", ".")): false,
-    bandeira2: fields.hasBandeira2 && fields.bandeira2 ?Number(fields.bandeira2.replace(",", ".")): false,
     nomeContrato: fields.nomeContrato,
-    bandeira1: Number(fields.bandeira1.replace(",", ".")),
-    bandeirada1: Number(fields.bandeirada1.replace(",", ".")),
-    desconto1: fields.desconto1 ? Number(fields.desconto1.replace(",", ".").replace("%", "")): false,
-    desconto2: fields.desconto2 ? Number(fields.desconto2.replace(",", ".").replace("%", "")): false
-
+    calculos: fields.calculos.map(calc => ({
+        nomeCalculo: calc.nomeCalculo,
+        bandeira: Number(calc.bandeira.replace(",", ".")),
+        bandeirada: Number(calc.bandeirada.replace(",", ".")),
+        desconto: calc.desconto ? Number(calc.desconto.replace(",", ".").replace("%", "")) : false,
+    }))
 }));
 //Schema Formulario ------------------------
 
@@ -147,29 +128,36 @@ const Form = () => {
         register,
         handleSubmit,
         formState: {errors},
-        watch,
-        reset
+        reset,
+        control
     } = useForm({
         mode:'all',
         criteriaMode: 'all',
         resolver: zodResolver(schema),
         defaultValues: {
             nomeContrato: '',
-            bandeira1: '',
-            bandeirada1: '',
-            desconto1: '',
-            hasBandeira2: false,
-            bandeira2: '',
-            bandeirada2: '',
-            desconto2: '',
+            calculos: [],
         }
     });
 
-    const hasBandeira2 = watch('hasBandeira2')
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: 'calculos'
+    });
+
+    const adicionarCalculo = () => {
+        append({
+            nomeCalculo: '',
+            bandeira: '',
+            bandeirada: '',
+            desconto: ''
+        });
+    };
+
     const handleSubmitForm = async (data) => {
         await saveContrato(data);
         reset();
-    }
+    };
 
 
   return (
@@ -181,90 +169,114 @@ const Form = () => {
             <label htmlFor="nomeContrato">Nome Contrato</label>
             {errors.nomeContrato && <p className='error'>{errors.nomeContrato.message}</p>}
             <input 
-            {...register('nomeContrato')}
+                {...register('nomeContrato')}
                 type="text" 
                 placeholder='Petrobras' 
                 name="nomeContrato" 
                 id="nomeContrato" 
-                />
+            />
             <br />
-            <Subtitle>Bandeira 1</Subtitle>
-            <label htmlFor="bandeira1">Bandeira *</label>
-            {errors.bandeira1 && <p className='error'>{errors.bandeira1.message}</p>}
-            <input 
-                {...register('bandeira1')}
-                maxLength={4}
-                type="text" 
-                placeholder='3,54'
-                name="bandeira1" 
-                id="bandeira1" 
-                />
-                
-            <label htmlFor="bandeirada1">Bandeirada *</label>
-            {errors.bandeirada1 && <p className='error'>{errors.bandeirada1.message}</p>}
-            <input 
-                {...register('bandeirada1')}
-                maxLength={5}
-                type="text"
-                name="bandeirada1" 
-                id="bandeirada1"
-                placeholder='3,54'
-                />
-            <label htmlFor="desconto1">Desconto</label>
-            <input 
-                {...register('desconto1')}
-                type="text" 
-                maxLength={3}
-                name="desconto1" 
-                placeholder='4'
-                id="desconto1" 
-                />
-            <div style={{display: 'flex', alignItems:'center'}}>
-
-                <label  htmlFor="hasBandeira2">
-                    Tem Bandeira 2
-                </label>
-                    <input 
-                        {...register('hasBandeira2')}
-                        type="checkbox" 
-                        name="hasBandeira2" 
-                        id="hasBandeira2" 
-                        style={{height: '15px', width: '20px'}}
-                    />
-            </div>
-            {hasBandeira2 && (
-            <> 
-                <Subtitle>Bandeira 2</Subtitle>
-                <label htmlFor="bandeira2">Bandeira 2 *</label>
-                {errors.bandeira2 && <p className='error'>{errors.bandeira2.message}</p>}
-                <input 
-                {...register('bandeira2')}
-                    type="text" 
-                    name="bandeira2"
-                    placeholder='4,32' 
-                    id="bandeira2" 
-                    />
-                <label htmlFor="bandeirada2">Bandeirada 2 *</label>
-                {errors.bandeirada2 && <p className='error'>{errors.bandeirada2.message}</p>}
-                <input 
-                {...register('bandeirada2')}
-                    type='text'
-                    name="bandeirada2" 
-                    id="bandeirada2" 
-                    placeholder='4,32' 
-                    />
-                <label htmlFor="desconto2">Desconto 2</label>
-                <input 
-                {...register('desconto2')}
-                    type="text" 
-                    name="desconto2" 
-                    placeholder='5' 
-                    id="desconto2" 
-                    />
-            </>
-            )}
             
-            <Btn type="submit" >Criar Contrato</Btn>
+            <Subtitle>Cálculos</Subtitle>
+            {errors.calculos && <p className='error'>{errors.calculos.message}</p>}
+            
+            {fields.map((field, index) => (
+                <div key={field.id} style={{
+                    border: '1px solid #ddd',
+                    padding: '15px',
+                    borderRadius: '8px',
+                    marginBottom: '15px',
+                    backgroundColor: '#f9f9f9',
+                    position: 'relative'
+                }}>
+                    <button
+                        type="button"
+                        onClick={() => remove(index)}
+                        style={{
+                            position: 'absolute',
+                            top: '10px',
+                            right: '10px',
+                            background: '#dc3545',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '50%',
+                            width: '25px',
+                            height: '25px',
+                            cursor: 'pointer',
+                            fontSize: '14px'
+                        }}
+                    >
+                        ×
+                    </button>
+                    
+                    <h3 style={{ marginBottom: '10px', fontSize: '1rem' }}>
+                        Cálculo {index + 1}
+                    </h3>
+                    
+                    <label>Nome do Cálculo *</label>
+                    {errors.calculos?.[index]?.nomeCalculo && (
+                        <p className='error'>{errors.calculos[index].nomeCalculo.message}</p>
+                    )}
+                    <input 
+                        {...register(`calculos.${index}.nomeCalculo`)}
+                        type="text"
+                        placeholder='Ex: Bandeira 1, Noturno, Domingo...'
+                    />
+                    
+                    <label>Bandeira (R$ por km) *</label>
+                    {errors.calculos?.[index]?.bandeira && (
+                        <p className='error'>{errors.calculos[index].bandeira.message}</p>
+                    )}
+                    <input 
+                        {...register(`calculos.${index}.bandeira`)}
+                        type="text"
+                        placeholder='3,54'
+                        maxLength={5}
+                    />
+                    
+                    <label>Bandeirada (R$ fixo) *</label>
+                    {errors.calculos?.[index]?.bandeirada && (
+                        <p className='error'>{errors.calculos[index].bandeirada.message}</p>
+                    )}
+                    <input 
+                        {...register(`calculos.${index}.bandeirada`)}
+                        type="text"
+                        placeholder='5,50'
+                        maxLength={5}
+                    />
+                    
+                    <label>Desconto (%)</label>
+                    {errors.calculos?.[index]?.desconto && (
+                        <p className='error'>{errors.calculos[index].desconto.message}</p>
+                    )}
+                    <input 
+                        {...register(`calculos.${index}.desconto`)}
+                        type="text"
+                        placeholder='10'
+                        maxLength={3}
+                    />
+                </div>
+            ))}
+            
+            <button
+                type="button"
+                onClick={adicionarCalculo}
+                style={{
+                    width: '100%',
+                    padding: '12px',
+                    backgroundColor: '#28a745',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    marginBottom: '15px'
+                }}
+            >
+                + Adicionar Cálculo
+            </button>
+            
+            <Btn type="submit">Criar Contrato</Btn>
         </FormContract>
     </FormContainer>
   )

@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import Reset from './styles/reset';
 import Home from './components/Home';
 import Simulador from './components/Simulador';
+import ListaContratos from './components/ListaContratos';
 import { ContractProvider } from './contexts/ContractContext';
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
                     <Routes>
                         <Route path='/' element={<Home />} />
                         <Route path='/simulador' element={<Simulador />} />
+                        <Route path='/contratos' element={<ListaContratos />} />
                     </Routes>
                 </ContractProvider>
             </ThemeProvider>
