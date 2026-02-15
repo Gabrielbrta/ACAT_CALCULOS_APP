@@ -5,44 +5,61 @@ import { useForm } from 'react-hook-form';
 const CardsContainer = styled.div `
     display: flex;
     flex-direction: column;
-    align-items: left;
-    background-color: #f1f1f1;
-    max-width: 376px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.116);
+    background-color: ${({theme}) => theme.color.bgCard};
+    box-shadow: ${({theme}) => theme.shadow.medium};
     width: 100%;
-    max-height: 210px;
-    border-radius: 5px;
-    height: 100%;
-    padding: ${({theme}) => theme.spacing.cardPadding};
+    border-radius: ${({theme}) => theme.borderRadius.large};
+    padding: 24px;
+    border: 1px solid ${({theme}) => theme.color.border};
+    transition: all 0.3s ease;
+    min-height: 280px;
+    
+    &:hover {
+        box-shadow: ${({theme}) => theme.shadow.large};
+        transform: translateY(-2px);
+    }
+    
     .result {
-        color: ${({theme}) => theme.color.result};
+        color: ${({theme}) => theme.color.primary};
+        font-weight: ${({theme}) => theme.font.wheightBold};
+    }
+    
+    h3 {
+        margin: 0 0 16px 0;
+        color: ${({theme}) => theme.color.title};
+        font-size: 1.1rem;
+        font-weight: ${({theme}) => theme.font.wheightBold};
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid ${({theme}) => theme.color.divider};
+    }
+    
+    p {
+        color: ${({theme}) => theme.color.text};
+        font-size: ${({theme}) => theme.text.textSize};
+        margin: 0 0 10px 0;
     }
 `
-
-const Select = styled.select`
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #acacac;
-    margin-bottom: 15px;
-    font-size: ${({theme}) => theme.text.textSize};
-    background-color: white;
-    cursor: pointer;
-    
-    &:focus {
-        outline: none;
-        border-color: ${({theme}) => theme.color.button};
-    }
-`;
 
 const Input = styled.input`
     max-width: 55px;
     width: 100%;
-    max-height: 30px;
+    max-height: 32px;
     padding: ${({theme}) => theme.spacing.inputPadding};
     font-size: ${({theme}) => theme.text.textSize};
-    border: 1px solid #acacac;
-    border-radius: 4px;
+    border: 1px solid ${({theme}) => theme.color.border};
+    border-radius: ${({theme}) => theme.borderRadius.small};
+    background-color: ${({theme}) => theme.color.bgColorElements};
+    color: ${({theme}) => theme.color.text};
+    transition: all 0.2s ease;
+    
+    &:focus {
+        outline: none;
+        border-color: ${({theme}) => theme.color.primary};
+        box-shadow: 0 0 0 2px rgba(30, 58, 95, 0.1);
+    }
 `;
 
 const Form = styled.form`
@@ -51,38 +68,68 @@ const Form = styled.form`
     align-items: center;
     justify-content: space-between;
     flex-direction: column;
+    gap: 5px;
+    
     div {
         display: flex;
         width: 100%;
         flex: 1;
         align-items: center;
         justify-content: space-between;
+        color: ${({theme}) => theme.color.text};
+        font-size: ${({theme}) => theme.text.textSize};
+        margin-bottom: 5px;
+        
+        label {
+            font-size: 0.85rem;
+            font-weight: ${({theme}) => theme.font.wheightH3};
+        }
+        
+        span {
+            color: ${({theme}) => theme.color.primary};
+            font-weight: ${({theme}) => theme.font.wheightH3};
+            font-size: 0.9rem;
+        }
+        
+        .desconto {
+            color: ${({theme}) => theme.color.success};
+        }
     }
 
     .enviar {
         flex-direction: column;
-        gap: 5px;
+        gap: 8px;
         align-items: start;
+        margin-top: 5px;
 
         button {
             width: 100%;
-            padding: 7px;
-            border-radius: 5px;
+            padding: 10px;
+            border-radius: ${({theme}) => theme.borderRadius.medium};
             border: none;
-            background: #5a5ae7;
-            color: white;
-            transition: .3s;
+            background: ${({theme}) => theme.color.button};
+            color: ${({theme}) => theme.color.buttonText};
+            transition: all 0.2s ease;
             cursor: pointer;
-            &:hover{
-                background: #1f1fa7;
+            font-weight: ${({theme}) => theme.font.wheightH3};
+            box-shadow: ${({theme}) => theme.shadow.small};
+            font-size: ${({theme}) => theme.text.textSize};
+            
+            &:hover {
+                background: ${({theme}) => theme.color.buttonHover};
+                transform: translateY(-1px);
+                box-shadow: ${({theme}) => theme.shadow.medium};
+            }
+            
+            &:active {
+                transform: translateY(0);
             }
         }
     }
 `
 
-const Card = ({contrato}) => {
+const Card = ({calculo, calculoIndex}) => {
     const {register, handleSubmit, watch, reset} = useForm();
-    const [calculoSelecionado, setCalculoSelecionado] = React.useState(0);
     const [resultado, setResultado] = React.useState(0);
     
     function toText(number) {return String(number.toFixed(2)).replace(".", ",");}
@@ -91,70 +138,37 @@ const Card = ({contrato}) => {
     React.useEffect(() => {
         reset();
         setResultado(0);
-        setCalculoSelecionado(0);
-    }, [contrato]);
+    }, [calculo]);
     
     const calcular = () => {
-        const calculoAtual = contrato.calculos[calculoSelecionado];
-        const km = toNumber(watch('km'));
-        const hp = toNumber(watch('hp'));
+        const km = toNumber(watch(`km_${calculoIndex}`));
+        const hp = toNumber(watch(`hp_${calculoIndex}`));
         
         if(isNaN(km) || isNaN(hp)) {
             setResultado("Não foi possível calcular");
         } else {
-            let resultado = (((km * calculoAtual.bandeira) + calculoAtual.bandeirada) + hp);
-            let desconto = calculoAtual.desconto ? (calculoAtual.desconto / 100) * resultado : 0;
+            let resultado = (((km * calculo.bandeira) + calculo.bandeirada) + hp);
+            let desconto = calculo.desconto ? (calculo.desconto / 100) * resultado : 0;
             resultado = resultado - desconto;
             resultado.toFixed(2);
             setResultado("R$ " + toText(resultado));
         }
     };
 
-    // Compatibilidade com contratos antigos (bandeira1/bandeira2)
-    const calculos = contrato.calculos || [
-        {
-            nomeCalculo: 'Bandeira 1',
-            bandeira: contrato.bandeira1,
-            bandeirada: contrato.bandeirada1,
-            desconto: contrato.desconto1
-        },
-        ...(contrato.hasBandeira2 ? [{
-            nomeCalculo: 'Bandeira 2',
-            bandeira: contrato.bandeira2,
-            bandeirada: contrato.bandeirada2,
-            desconto: contrato.desconto2
-        }] : [])
-    ];
-
-    const calculoAtual = calculos[calculoSelecionado];
-
     return (
         <CardsContainer>
-            {calculos.length > 1 && (
-                <Select 
-                    value={calculoSelecionado} 
-                    onChange={(e) => {
-                        setCalculoSelecionado(Number(e.target.value));
-                        setResultado(0);
-                    }}
-                >
-                    {calculos.map((calc, index) => (
-                        <option key={index} value={index}>
-                            {calc.nomeCalculo}
-                        </option>
-                    ))}
-                </Select>
-            )}
-            
-            <p><strong>{calculoAtual.nomeCalculo}</strong></p>
+            <h3>
+                <i className="fa-solid fa-calculator"></i>
+                {calculo.nomeCalculo}
+            </h3>
             <Form onSubmit={handleSubmit(calcular)}>
                 <div className='inputs'>
-                    <label htmlFor="km">KM</label>
-                    <Input maxLength={6} {...register("km")} type="text" id="km" />
-                    x <span>{toText(calculoAtual.bandeira)}</span> + <span>{toText(calculoAtual.bandeirada)}</span> +
-                    <label htmlFor="hp">HP</label>
-                    <Input maxLength={6} {...register("hp")} type="text" id="hp" />
-                    {calculoAtual.desconto && <span className='desconto'>- {calculoAtual.desconto}%</span>}
+                    <label htmlFor={`km_${calculoIndex}`}>KM</label>
+                    <Input maxLength={6} {...register(`km_${calculoIndex}`)} type="text" id={`km_${calculoIndex}`} />
+                    x <span>{toText(calculo.bandeira)}</span> + <span>{toText(calculo.bandeirada)}</span> +
+                    <label htmlFor={`hp_${calculoIndex}`}>HP</label>
+                    <Input maxLength={6} {...register(`hp_${calculoIndex}`)} type="text" id={`hp_${calculoIndex}`} />
+                    {calculo.desconto && <span className='desconto'>- {calculo.desconto}%</span>}
                 </div>
                 <div className='enviar'>
                     <p>Resultado: <span className='result'>{resultado}</span></p>

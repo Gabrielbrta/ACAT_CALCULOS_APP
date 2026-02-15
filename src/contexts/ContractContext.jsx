@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 const ContractContext = createContext();
 
@@ -17,18 +18,42 @@ export const ContractProvider = ({ children }) => {
   };
 
   const saveContrato = async (data) => {
-    await window.Api.SalvarContrato(data);
-    await loadContratos(); // Recarrega os contratos após salvar
+    try {
+      await window.Api.SalvarContrato(data);
+      await loadContratos();
+      toast.success('Contrato cadastrado com sucesso!', {
+        icon: '✅'
+      });
+    } catch (error) {
+      toast.error('Erro ao cadastrar contrato!');
+      console.error(error);
+    }
   };
 
   const updateContrato = async (id, data) => {
-    await window.Api.AtualizarContrato(id, data);
-    await loadContratos(); // Recarrega os contratos após atualizar
+    try {
+      await window.Api.AtualizarContrato(id, data);
+      await loadContratos();
+      toast.success('Contrato atualizado com sucesso!', {
+        icon: '✏️'
+      });
+    } catch (error) {
+      toast.error('Erro ao atualizar contrato!');
+      console.error(error);
+    }
   };
 
   const deleteContrato = async (id) => {
-    await window.Api.DeletarContrato(id);
-    await loadContratos(); // Recarrega os contratos após deletar
+    try {
+      await window.Api.DeletarContrato(id);
+      await loadContratos();
+      toast.success('Contrato excluído com sucesso!', {
+        icon: '🗑️'
+      });
+    } catch (error) {
+      toast.error('Erro ao excluir contrato!');
+      console.error(error);
+    }
   };
 
   const getContratoById = (id) => {

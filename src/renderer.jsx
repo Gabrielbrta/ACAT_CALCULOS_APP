@@ -6,7 +6,10 @@ import Reset from './styles/reset';
 import Home from './components/Home';
 import Simulador from './components/Simulador';
 import ListaContratos from './components/ListaContratos';
+import Form from './components/Form';
 import { ContractProvider } from './contexts/ContractContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
     return (
@@ -14,10 +17,24 @@ const App = () => {
             <ThemeProvider theme={theme}>
                 <ContractProvider>
                     <Reset />
+                    <ToastContainer
+                        position="top-right"
+                        autoClose={3000}
+                        hideProgressBar={false}
+                        newestOnTop={false}
+                        closeOnClick
+                        rtl={false}
+                        pauseOnFocusLoss
+                        draggable
+                        pauseOnHover
+                        theme="light"
+                    />
                     <Routes>
                         <Route path='/' element={<Home />} />
                         <Route path='/simulador' element={<Simulador />} />
                         <Route path='/contratos' element={<ListaContratos />} />
+                        <Route path='/adicionar-contrato' element={<Form />} />
+                        <Route path='/editar-contrato/:id' element={<Form />} />
                     </Routes>
                 </ContractProvider>
             </ThemeProvider>

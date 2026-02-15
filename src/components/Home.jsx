@@ -1,14 +1,13 @@
 import React from 'react'
 import styled from 'styled-components';
 import Menu from './Menu';
-import Form from './Form';
 import Contract from './Contract';
 
 const Main = styled.main`
     width: 100%;
     height: 100vh;
     display:grid;
-    grid-template-columns: 280px 1fr 300px;
+    grid-template-columns: 280px 1fr;
 `
 
 const Home = () => {
@@ -16,7 +15,6 @@ const Home = () => {
     <Main>
         <Menu />
         <Contract />
-        <Form />
     </Main>
   )
 }

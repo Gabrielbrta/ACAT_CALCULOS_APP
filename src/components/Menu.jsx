@@ -8,16 +8,25 @@ const ContainerMenu = styled.aside`
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: ${({theme}) => theme.color.bgColorElements};
-  padding: 20px 0px;
+  background-color: ${({theme}) => theme.color.bgSidebar};
+  padding: 30px 0px;
   text-align: center;
+  box-shadow: 2px 0 8px ${({theme}) => theme.color.shadow};
+`
 
+const Logo = styled.div`
+  color: ${({theme}) => theme.color.textOnDark};
+  font-size: 1.5rem;
+  font-weight: ${({theme}) => theme.font.wheightBold};
+  padding: 0 20px;
+  margin-bottom: 40px;
+  letter-spacing: 2px;
 `
 
 const ContainerLists = styled.div `
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   height: 90%;
   width: 100%;
 `
@@ -26,7 +35,7 @@ const ContainerLists = styled.div `
 const Menu = () => {
   return (
     <ContainerMenu>
-      <Subtitle>ACAT</Subtitle>
+      <Logo>TaxiCalc Pro</Logo>
       <ContainerLists>
         <List title={"Funcionalidades"} items={["Gerenciar Contratos", "Simulador"]} />
       </ContainerLists>

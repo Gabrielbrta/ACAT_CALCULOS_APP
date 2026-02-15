@@ -4,87 +4,135 @@ import { useContract } from '../contexts/ContractContext';
 import { Title, Subtitle } from './Title';
 import Btn from './Button';
 import { useNavigate } from 'react-router-dom';
+import PageHeader from './PageHeader';
 
 const Container = styled.div`
   width: 100%;
   height: 100vh;
-  padding: 40px;
+  padding: 30px;
   overflow-y: auto;
-  background-color: #f5f5f5;
+  background-color: ${({theme}) => theme.color.bgPage};
 `;
 
 const Header = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
+  align-items: flex-start;
+  margin-bottom: 20px;
   
   .back-button {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     color: ${({theme}) => theme.color.subtitle};
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: ${({theme}) => theme.borderRadius.medium};
+    transition: all 0.2s ease;
     
     &:hover {
       color: ${({theme}) => theme.color.title};
+      background-color: ${({theme}) => theme.color.bgHover};
     }
   }
 `;
 
 const SearchBar = styled.div`
   display: flex;
-  gap: 15px;
+  gap: 12px;
   margin-bottom: 20px;
+  align-items: center;
   
   input {
     flex: 1;
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
+    padding: ${({theme}) => theme.spacing.inputPadding};
+    border: 1px solid ${({theme}) => theme.color.border};
+    border-radius: ${({theme}) => theme.borderRadius.medium};
+    font-size: ${({theme}) => theme.text.textSize};
+    transition: all 0.2s ease;
     
     &:focus {
       outline: none;
-      border-color: ${({theme}) => theme.color.button};
+      border-color: ${({theme}) => theme.color.primary};
+      box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.1);
+    }
+  }
+  
+  .add-button {
+    padding: ${({theme}) => theme.spacing.buttonPadding};
+    background-color: ${({theme}) => theme.color.button};
+    color: ${({theme}) => theme.color.buttonText};
+    border: none;
+    border-radius: ${({theme}) => theme.borderRadius.medium};
+    font-size: ${({theme}) => theme.text.textSize};
+    font-weight: ${({theme}) => theme.font.wheightH3};
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: ${({theme}) => theme.shadow.small};
+    
+    &:hover {
+      background-color: ${({theme}) => theme.color.buttonHover};
+      transform: translateY(-1px);
+      box-shadow: ${({theme}) => theme.shadow.medium};
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+    
+    i {
+      font-size: 0.95rem;
     }
   }
 `;
 
 const Table = styled.table`
   width: 100%;
-  background: white;
-  border-radius: 8px;
+  background: ${({theme}) => theme.color.bgTable};
+  border-radius: ${({theme}) => theme.borderRadius.large};
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: ${({theme}) => theme.shadow.medium};
   border-collapse: collapse;
+  border: 1px solid ${({theme}) => theme.color.border};
   
   thead {
-    background-color: ${({theme}) => theme.color.button};
-    color: white;
+    background-color: ${({theme}) => theme.color.bgTableHeader};
+    color: ${({theme}) => theme.color.textOnDark};
     
     th {
-      padding: 15px;
+      padding: 12px;
       text-align: left;
-      font-weight: 600;
+      font-weight: ${({theme}) => theme.font.wheightBold};
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
   }
   
   tbody {
     tr {
-      border-bottom: 1px solid #eee;
-      transition: background 0.2s;
+      border-bottom: 1px solid ${({theme}) => theme.color.border};
+      transition: background 0.2s ease;
       
       &:hover {
-        background-color: #f9f9f9;
+        background-color: ${({theme}) => theme.color.bgHover};
+      }
+      
+      &:last-child {
+        border-bottom: none;
       }
       
       td {
-        padding: 15px;
+        padding: 12px;
+        color: ${({theme}) => theme.color.text};
+        font-size: ${({theme}) => theme.text.textSize};
       }
     }
   }
@@ -92,41 +140,49 @@ const Table = styled.table`
 
 const Actions = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 6px;
   
   button {
-    padding: 6px 12px;
+    padding: 6px 10px;
     border: none;
-    border-radius: 4px;
+    border-radius: ${({theme}) => theme.borderRadius.small};
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.2s;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    box-shadow: ${({theme}) => theme.shadow.small};
     
     &.edit {
-      background-color: #ffc107;
-      color: #000;
+      background-color: ${({theme}) => theme.color.warning};
+      color: ${({theme}) => theme.color.textOnDark};
       
       &:hover {
-        background-color: #ffb300;
+        background-color: ${({theme}) => theme.color.warningHover};
+        transform: translateY(-1px);
       }
     }
     
     &.delete {
-      background-color: #dc3545;
-      color: white;
+      background-color: ${({theme}) => theme.color.danger};
+      color: ${({theme}) => theme.color.textOnDark};
       
       &:hover {
-        background-color: #c82333;
+        background-color: ${({theme}) => theme.color.dangerHover};
+        transform: translateY(-1px);
       }
     }
     
     &.view {
-      background-color: #17a2b8;
-      color: white;
+      background-color: ${({theme}) => theme.color.info};
+      color: ${({theme}) => theme.color.textOnDark};
       
       &:hover {
-        background-color: #138496;
+        background-color: ${({theme}) => theme.color.infoHover};
+        transform: translateY(-1px);
       }
+    }
+    
+    &:active {
+      transform: translateY(0);
     }
   }
 `;
@@ -136,53 +192,93 @@ const Pagination = styled.div`
   justify-content: center;
   align-items: center;
   gap: 10px;
-  margin-top: 30px;
+  margin-top: 20px;
   
   button {
-    padding: 8px 16px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 4px;
+    padding: 8px 14px;
+    border: 1px solid ${({theme}) => theme.color.border};
+    background: ${({theme}) => theme.color.bgColorElements};
+    border-radius: ${({theme}) => theme.borderRadius.medium};
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    color: ${({theme}) => theme.color.text};
+    font-weight: ${({theme}) => theme.font.wheightH3};
+    font-size: ${({theme}) => theme.text.smallSize};
     
     &:hover:not(:disabled) {
       background-color: ${({theme}) => theme.color.button};
-      color: white;
+      color: ${({theme}) => theme.color.buttonText};
       border-color: ${({theme}) => theme.color.button};
+      transform: translateY(-1px);
+      box-shadow: ${({theme}) => theme.shadow.small};
     }
     
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
     }
     
     &.active {
       background-color: ${({theme}) => theme.color.button};
-      color: white;
+      color: ${({theme}) => theme.color.buttonText};
       border-color: ${({theme}) => theme.color.button};
     }
   }
   
   span {
-    color: ${({theme}) => theme.color.subtitle};
+    color: ${({theme}) => theme.color.text};
+    font-weight: ${({theme}) => theme.font.wheightH3};
+    font-size: ${({theme}) => theme.text.smallSize};
   }
 `;
 
 const EmptyState = styled.div`
   text-align: center;
-  padding: 60px 20px;
+  padding: 50px 20px;
   color: ${({theme}) => theme.color.subtitle};
+  background: ${({theme}) => theme.color.bgColorElements};
+  border-radius: ${({theme}) => theme.borderRadius.large};
+  border: 2px dashed ${({theme}) => theme.color.border};
   
   i {
-    font-size: 4rem;
-    margin-bottom: 20px;
+    font-size: 3.5rem;
+    margin-bottom: 16px;
     opacity: 0.3;
+    color: ${({theme}) => theme.color.primary};
   }
   
   h3 {
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    color: ${({theme}) => theme.color.title};
+    font-weight: ${({theme}) => theme.font.wheightBold};
+    font-size: 1.1rem;
   }
+  
+  p {
+    color: ${({theme}) => theme.color.subtitle};
+    font-size: ${({theme}) => theme.text.smallSize};
+  }
+`;
+
+const Badge = styled.span`
+  background: ${({theme}) => theme.color.primary};
+  color: ${({theme}) => theme.color.textOnDark};
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: ${({theme}) => theme.font.wheightBold};
+  font-size: 0.85rem;
+`;
+
+const Tag = styled.span`
+  display: inline-block;
+  background: ${({theme}) => theme.color.bgHover};
+  color: ${({theme}) => theme.color.text};
+  padding: 3px 8px;
+  border-radius: ${({theme}) => theme.borderRadius.small};
+  margin-right: 5px;
+  margin-bottom: 5px;
+  font-size: 0.8rem;
+  border: 1px solid ${({theme}) => theme.color.border};
 `;
 
 const ListaContratos = () => {
@@ -190,17 +286,27 @@ const ListaContratos = () => {
   const { contratos, deleteContrato, setCardContent } = useContract();
   
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Filtrar contratos baseado na busca
+  // Debounce do searchTerm
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Filtrar contratos baseado na busca com debounce
   const filteredContratos = useMemo(() => {
-    if (!searchTerm) return contratos;
+    if (!debouncedSearchTerm) return contratos;
     
     return contratos.filter(contrato =>
-      contrato.nomeContrato.toLowerCase().includes(searchTerm.toLowerCase())
+      contrato.nomeContrato.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
     );
-  }, [contratos, searchTerm]);
+  }, [contratos, debouncedSearchTerm]);
 
   // Paginação
   const totalPages = Math.ceil(filteredContratos.length / itemsPerPage);
@@ -220,21 +326,25 @@ const ListaContratos = () => {
   };
 
   const handleEdit = (contrato) => {
-    // TODO: Implementar modal de edição
-    alert('Funcionalidade de edição será implementada em breve!');
+    navigate(`/editar-contrato/${contrato.id}`, { state: { contrato } });
   };
 
   return (
     <Container>
       <Header>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <button className="back-button" onClick={() => navigate('/')}>
-            <i className="fa-solid fa-arrow-left"></i>
-            Voltar
-          </button>
-          <Title>Gerenciar Contratos</Title>
-        </div>
+        <button className="back-button" onClick={() => navigate('/')}>
+          <i className="fa-solid fa-arrow-left"></i>
+          Voltar
+        </button>
       </Header>
+      
+      <PageHeader 
+        title="Gerenciar Contratos" 
+        breadcrumbs={[
+          { label: 'Início', path: '/' },
+          { label: 'Contratos' }
+        ]}
+      />
 
       <SearchBar>
         <input
@@ -246,6 +356,14 @@ const ListaContratos = () => {
             setCurrentPage(1); // Reset para primeira página ao buscar
           }}
         />
+        <button 
+          className="add-button" 
+          onClick={() => navigate('/adicionar-contrato')}
+          title="Novo Contrato"
+        >
+          <i className="fa-solid fa-plus"></i>
+          Novo Contrato
+        </button>
       </SearchBar>
 
       {currentContratos.length === 0 ? (
@@ -281,29 +399,13 @@ const ListaContratos = () => {
                   <tr key={contrato.id}>
                     <td><strong>{contrato.nomeContrato}</strong></td>
                     <td style={{ textAlign: 'center' }}>
-                      <span style={{ 
-                        background: '#e8f4f8', 
-                        padding: '4px 12px', 
-                        borderRadius: '12px',
-                        fontWeight: 'bold',
-                        color: '#0066cc'
-                      }}>
-                        {calculos.length}
-                      </span>
+                      <Badge>{calculos.length}</Badge>
                     </td>
                     <td>
                       {calculos.map((calc, idx) => (
-                        <span key={idx} style={{ 
-                          display: 'inline-block',
-                          background: '#f0f0f0',
-                          padding: '3px 10px',
-                          borderRadius: '4px',
-                          marginRight: '5px',
-                          marginBottom: '5px',
-                          fontSize: '0.85rem'
-                        }}>
+                        <Tag key={idx}>
                           {calc.nomeCalculo}
-                        </span>
+                        </Tag>
                       ))}
                     </td>
                     <td>
