@@ -321,8 +321,6 @@ const Form = () => {
     // Carrega dados para edição
     useEffect(() => {
         if (isEditMode && contratoToEdit) {
-            console.log('Carregando contrato para edição:', contratoToEdit);
-            
             // Retrocompatibilidade: se não tiver calculos[], criar baseado nos dados antigos
             const calculos = contratoToEdit.calculos || [
                 {
@@ -363,7 +361,6 @@ const Form = () => {
     };
 
     const handleSubmitForm = async (data) => {
-        console.log('Submetendo formulário:', { isEditMode, id: Number(id), data });
         if (isEditMode) {
             await updateContrato(Number(id), data);
         } else {
@@ -399,7 +396,7 @@ const Form = () => {
   return (
     <Container>
       <Header>
-        <button className="back-button" onClick={() => navigate('/')}>
+        <button className="back-button" onClick={() => navigate('/contratos')}>
           <i className="fa-solid fa-arrow-left"></i>
           Voltar
         </button>
@@ -517,12 +514,10 @@ const Form = () => {
                 type="button"
                 onClick={adicionarCalculo}
             >
-                <i className="fa-solid fa-plus-circle"></i>
                 Adicionar Novo Cálculo
             </AddButton>
             
             <SubmitButton type="submit">
-                <i className="fa-solid fa-check-circle" style={{marginRight: '8px'}}></i>
                 {isEditMode ? 'Salvar Alterações' : 'Criar Contrato'}
             </SubmitButton>
         </FormContract>

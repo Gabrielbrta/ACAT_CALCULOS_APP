@@ -104,7 +104,6 @@ const Contract = () => {
             {calculos.map((calculo, index) => (
               <Card 
                 key={index}
-                contrato={contrato}
                 calculo={calculo}
                 calculoIndex={index}
               />

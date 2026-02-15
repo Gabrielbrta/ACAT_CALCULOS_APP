@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import styled from 'styled-components';
 import { useNavigate  } from "react-router-dom";
 import { useContract } from '../contexts/ContractContext';
@@ -132,7 +132,7 @@ const List = ({title, items}) => {
     const submenuRef = useRef(null);
     const checkTimeoutRef = useRef(null);
 
-    const isMouseOverMenuArea = (e) => {
+    const isMouseOverMenuArea = useCallback((e) => {
         if (!menuItemRef.current && !submenuRef.current) return false;
         
         const menuRect = menuItemRef.current?.getBoundingClientRect();
@@ -151,9 +151,9 @@ const List = ({title, items}) => {
             e.clientY <= submenuRect.bottom;
             
         return isOverMenuItem || isOverSubmenu;
-    };
+    }, []);
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = useCallback((e) => {
         if (checkTimeoutRef.current) {
             clearTimeout(checkTimeoutRef.current);
         }
@@ -163,14 +163,14 @@ const List = ({title, items}) => {
                 setShowSubmenu(false);
             }
         }, 100);
-    };
+    }, [isMouseOverMenuArea]);
 
-    const handleMouseEnter = () => {
+    const handleMouseEnter = useCallback(() => {
         setShowSubmenu(true);
         document.addEventListener('mousemove', handleMouseMove);
-    };
+    }, [handleMouseMove]);
 
-    const handleMouseLeaveArea = () => {
+    const handleMouseLeaveArea = useCallback(() => {
         if (checkTimeoutRef.current) {
             clearTimeout(checkTimeoutRef.current);
         }
@@ -178,7 +178,7 @@ const List = ({title, items}) => {
             setShowSubmenu(false);
             document.removeEventListener('mousemove', handleMouseMove);
         }, 150);
-    };
+    }, [handleMouseMove]);
 
     React.useEffect(() => {
         return () => {
@@ -187,7 +187,7 @@ const List = ({title, items}) => {
                 clearTimeout(checkTimeoutRef.current);
             }
         };
-    }, []);
+    }, [handleMouseMove]);
 
     const handleContratoClick = (contrato) => {
         setCardContent(contrato.id);
@@ -207,11 +207,24 @@ const List = ({title, items}) => {
                 return (
                     <React.Fragment key={i}>
                     {item === "Simulador" ?
-                    <ListItem onClick={() => {navigate("/simulador") }}>{item}</ListItem> :
+                    <ListItem onClick={() => {
+                        document.removeEventListener('mousemove', handleMouseMove);
+                        if (checkTimeoutRef.current) {
+                            clearTimeout(checkTimeoutRef.current);
+                        }
+                        navigate("/simulador");
+                    }}>{item}</ListItem> :
                     item === "Gerenciar Contratos" ?
                     <ListItem 
                         ref={menuItemRef}
-                        onClick={() => {navigate("/contratos") }}
+                        onClick={() => {
+                            setShowSubmenu(false);
+                            document.removeEventListener('mousemove', handleMouseMove);
+                            if (checkTimeoutRef.current) {
+                                clearTimeout(checkTimeoutRef.current);
+                            }
+                            navigate("/contratos");
+                        }}
                         onMouseEnter={handleMouseEnter}
                         onMouseLeave={handleMouseLeaveArea}
                     >
@@ -244,7 +257,13 @@ const List = ({title, items}) => {
                         </SubmenuContainer>
                     </ListItem> :
                     item === "Adicionar Contrato" ?
-                    <ListItem onClick={() => {navigate("/adicionar-contrato") }}>{item}</ListItem> :
+                    <ListItem onClick={() => {
+                        document.removeEventListener('mousemove', handleMouseMove);
+                        if (checkTimeoutRef.current) {
+                            clearTimeout(checkTimeoutRef.current);
+                        }
+                        navigate("/adicionar-contrato");
+                    }}>{item}</ListItem> :
                     <ListItem>{item}</ListItem>}
                     
                 </React.Fragment>

@@ -158,7 +158,6 @@ const Card = ({calculo, calculoIndex}) => {
     return (
         <CardsContainer>
             <h3>
-                <i className="fa-solid fa-calculator"></i>
                 {calculo.nomeCalculo}
             </h3>
             <Form onSubmit={handleSubmit(calcular)}>
