@@ -6,10 +6,12 @@ Sistema desktop para gerenciamento de contratos de transporte, construído com E
 
 ## 🎯 Objetivo
 
-Gerenciar contratos de táxi/transporte, permitindo:
-- Criar contratos com bandeiras e descontos
-- Calcular valores de corridas
-- Visualizar e selecionar contratos
+Gerenciar contratos de táxi/transporte e simular cenários de operação, permitindo:
+- Criar e editar contratos com múltiplas bandeiras e descontos
+- Calcular valores de corridas automaticamente
+- Visualizar e selecionar contratos via menu interativo
+- **✨ NOVO**: Simular corridas com parâmetros personalizados
+- **✨ NOVO**: Exportar relatórios para Excel com formatação profissional
 
 ## 📁 Estrutura da Documentação
 
@@ -77,14 +79,17 @@ docs/
 
 ## 🛠️ Tecnologias
 
-- **Electron**: Framework desktop
-- **React 18+**: UI library
+- **Electron 37.2.5**: Framework desktop
+- **React 19.1.1**: UI library
 - **Vite 5.x**: Build tool
-- **React Router**: Navegação
-- **styled-components**: CSS-in-JS
-- **react-hook-form**: Gerenciamento de formulários
-- **zod**: Validação de schemas
-- **Electron Forge**: Packaging
+- **React Router 7.13.0**: Navegação entre páginas
+- **styled-components 6.1.19**: CSS-in-JS
+- **react-hook-form 7.62.0**: Gerenciamento de formulários
+- **zod 4.0.15**: Validação de schemas
+- **xlsx-js-style**: Exportação Excel com estilos
+- **react-toastify 11.0.5**: Notificações
+- **FontAwesome**: Ícones
+- **Electron Forge**: Packaging e distribuição
 
 ## 🚀 Como Usar Esta Documentação
 
@@ -162,8 +167,33 @@ Contratos são salvos em JSON:
 - **Estrutura**: Array de objetos
 - **Acesso**: Via IPC (window.Api)
 
+## 🆕 Novas Funcionalidades (v1.1.0)
+
+### Simulador de Corridas
+- **Dois modos de simulação**: KM variado (range) ou KM fixo
+- **Parâmetros personalizáveis**: Bandeira, bandeirada, desconto, KM, quantidade
+- **Exportação Excel estilizada**: Cores corporativas, bordas, formatação profissional
+- **Relatórios dinâmicos**: Detalhado (variado) ou resumido (fixo)
+- **Validação robusta**: Schemas dinâmicos com Zod
+- **Máscaras de input**: Valores monetários e numéricos
+- **Performance**: Suporta até 10.000 corridas
+
+### Edição de Contratos
+- **Rota dedicada**: `/editar-contrato/:id`
+- **Formulário dual-mode**: Criação e edição no mesmo componente
+- **Retrocompatibilidade**: Suporta formato antigo (bandeira1/2) e novo (calculos[])
+- **Navegação integrada**: Acesso via tabela de contratos
+
+### Melhorias de UI/UX
+- **Design corporativo**: Paleta de cores profissional (#1E3A5F, #2C3E50)
+- **PageHeader**: Breadcrumbs em todas as páginas
+- **Submenu interativo**: Lista de contratos com hover e scroll
+- **Espaçamento otimizado**: Interface mais limpa e compacta
+- **Radio buttons estilizados**: Seleção visual clara
+- **Loading states**: Feedback visual durante operações
+
 ---
 
-**Versão**: 1.0.0  
-**Última Atualização**: 14 de Fevereiro de 2026  
+**Versão**: 1.1.0 (TaxiCalc Pro)  
+**Última Atualização**: 15 de Fevereiro de 2026  
 **Autor**: Gabrielbrta

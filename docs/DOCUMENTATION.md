@@ -10,11 +10,13 @@ ELECTRON_REACT_SETUP/
 │   │   ├── Button.jsx          # Botão estilizado reutilizável
 │   │   ├── Card.jsx            # Card de exibição e cálculo de contrato
 │   │   ├── Contract.jsx        # Área principal de visualização do contrato
-│   │   ├── Form.jsx            # Formulário de criação de contratos
+│   │   ├── Form.jsx            # Formulário de criação/edição de contratos (dual-mode)
 │   │   ├── Home.jsx            # Página principal (layout grid)
-│   │   ├── List.jsx            # Lista de contratos e funcionalidades
+│   │   ├── List.jsx            # Lista de contratos (submenu lateral)
+│   │   ├── ListaContratos.jsx  # ✨ Página de gerenciamento (tabela + CRUD)
 │   │   ├── Menu.jsx            # Menu lateral esquerdo
-│   │   ├── Simulador.jsx       # Página de simulador (futura)
+│   │   ├── PageHeader.jsx      # ✨ Cabeçalho com breadcrumbs
+│   │   ├── Simulador.jsx       # ✨ Página de simulador + exportação Excel
 │   │   └── Title.jsx           # Componentes de título (Title, Subtitle)
 │   │
 │   ├── 📂 contexts/            # Context API
@@ -22,13 +24,15 @@ ELECTRON_REACT_SETUP/
 │   │
 │   ├── 📂 styles/              # Estilos globais
 │   │   ├── Reset.jsx           # Reset CSS global
-│   │   └── theme.jsx           # Tema (cores, tamanhos, espaçamentos)
+│   │   └── theme.jsx           # Tema corporativo (cores, tamanhos, espaçamentos)
 │   │
 │   ├── 📂 contratos/           # Pasta para armazenar dados (JSON)
 │   │
 │   ├── main.js                 # Processo principal do Electron
 │   ├── preload.js              # Script de ponte Electron (IPC)
 │   └── renderer.jsx            # Ponto de entrada React + Router
+│
+├── 📂 docs/                    # Documentação completa do projeto
 │
 ├── 📄 forge.config.js          # Configuração Electron Forge
 ├── 📄 vite.main.config.mjs     # Config Vite para main process
@@ -490,14 +494,57 @@ Vantagens:
 
 ---
 
+## ✨ Funcionalidades Implementadas (v1.1.0 - TaxiCalc Pro)
+
+### **Simulador de Corridas** ✅
+- ✅ Modo KM Variado (range aleatório)
+- ✅ Modo KM Fixo (valor único)
+- ✅ Exportação Excel com xlsx-js-style
+- ✅ Formatação profissional (cores, bordas, merge)
+- ✅ Validação dinâmica com Zod
+- ✅ Máscaras de input
+- ✅ Suporte até 10.000 corridas
+- ✅ Dois formatos de relatório (detalhado/resumido)
+
+### **Edição de Contratos** ✅
+- ✅ Rota dedicada `/editar-contrato/:id`
+- ✅ Formulário dual-mode (cria/edita)
+- ✅ Retrocompatibilidade (formato antigo/novo)
+- ✅ Integração com tabela de contratos
+
+### **Melhorias de UI/UX** ✅
+- ✅ Design corporativo (#1E3A5F, #2C3E50)
+- ✅ PageHeader com breadcrumbs
+- ✅ Submenu interativo com hover
+- ✅ Espaçamento otimizado
+- ✅ Radio buttons estilizados
+- ✅ Loading states
+- ✅ Notificações com react-toastify
+
+### **Gerenciamento de Contratos** ✅
+- ✅ Tabela com busca
+- ✅ Paginação (10 itens/página)
+- ✅ Exclusão com confirmação
+- ✅ Visualização rápida
+- ✅ Ações CRUD completas
+
+---
+
 ## 🔄 Próximas Funcionalidades
 
-- [ ] Implementar página Simulador
-- [ ] Adicionar edição de contratos
-- [ ] Adicionar exclusão de contratos
 - [ ] Exportar contratos para PDF
+- [ ] Adicionar gráficos/dashboards
+- [ ] Histórico de simulações
+- [ ] Importar contratos de Excel
 - [ ] Adicionar autenticação
-- [ ] Histórico de corridas
+- [ ] Modo escuro (dark mode)
+- [ ] Backup automático de dados
+- [ ] Relatórios comparativos
+
+---
+
+**Versão Atual**: 1.1.0 (TaxiCalc Pro)  
+**Última Atualização**: 15 de Fevereiro de 2026
 
 ---
 
